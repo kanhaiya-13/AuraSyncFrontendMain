@@ -1,0 +1,27 @@
+{
+  "name": "AuraSync - AI-Powered Fashion Analysis",
+  "short_name": "AuraSync",
+  "description": "Discover your unique fashion personality with AI-powered body analysis, face shape detection, and personalized style recommendations",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["fashion", "lifestyle", "shopping"],
+  "lang": "en",
+  "dir": "ltr"
+}

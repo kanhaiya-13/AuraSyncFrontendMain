@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# Host
+Host: https://aurasync.com
+
+# Sitemaps
+Sitemap: https://aurasync.com/sitemap.xml
