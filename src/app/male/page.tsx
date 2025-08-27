@@ -6,6 +6,11 @@ import GenderNavbar from '../../components/GenderNavbar';
 import FaceAnalysisWidget from '../../components/FaceAnalysisWidget';
 import BodyAnalysisWidget from '../../components/BodyAnalysisWidget';
 import SkinToneAnalysisWidget from '../../components/SkinToneAnalysisWidget';
+import HeroSectionMale from '@/components/HeroSectionMale';
+import OutfitRecommendations from '@/components/male/OutfitRecommendations';
+import OccasionRecommendations from '@/components/male/OccasionRecommendations';
+import MarqueeText from '@/components/male/MarqueeText';
+import ProductGrid from '@/components/male/ProductGrid';
 
 // Analysis steps
 const ANALYSIS_STEPS = [
@@ -36,137 +41,13 @@ interface Product {
 // Hero Section Component - Adapted for male users
 const Hero = () => {
   return (
-    <section className="min-h-screen relative overflow-hidden">
-      {/* Background Gradient - Adapted for male theme */}
-      <div className="absolute inset-0 z-0">
-        <div className="w-full h-full bg-gradient-to-r from-blue-900 via-purple-800 to-cyan-400"></div>
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content - Text */}
-            <div className="text-left space-y-6 z-10">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight drop-shadow-lg">
-                Your Aura called.{' '}
-                <span className="block">
-                  It wants a better outfit.
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-lg">
-                AuraSync finds what really works for you.
-              </p>
-            </div>
-
-            {/* Right Side - Smart Mirror and Model */}
-            <div className="relative z-10 flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Blue Neon Ring */}
-                <div className="absolute inset-0 w-96 h-96 border-4 border-blue-400 rounded-full blur-sm opacity-60 animate-pulse"></div>
-                
-                {/* Smart Mirror */}
-                <div className="relative w-80 h-96 bg-white/20 backdrop-blur-lg rounded-2xl border-2 border-white/30 p-6 shadow-2xl">
-                  {/* AI Interface */}
-                  <div className="text-center text-white mb-6">
-                    <div className="text-3xl font-bold mb-2">AI</div>
-                    <div className="text-sm opacity-80">Style Analysis</div>
-                  </div>
-                  
-                  {/* Skin Tone Swatches */}
-                  <div className="grid grid-cols-6 gap-2 mb-6">
-                    {['#f5d0c5', '#e6c3a3', '#d4a574', '#b87c5c', '#8b4513', '#654321'].map((color, index) => (
-                      <div
-                        key={index}
-                        className="w-8 h-8 rounded-full border-2 border-white/50"
-                        style={{ backgroundColor: color }}
-                      ></div>
-                    ))}
-                  </div>
-                  
-                  {/* Face Outline */}
-                  <div className="flex justify-center">
-                    <div className="w-16 h-20 border-2 border-white/60 rounded-full relative">
-                      <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/60 rounded-full"></div>
-                      <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/60 rounded-full ml-3"></div>
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-white/60 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Clothing Cards */}
-                <div className="absolute -top-8 -left-12 w-20 h-24 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-200 to-blue-300 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute -top-4 -right-8 w-16 h-20 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gray-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute top-8 -right-4 w-14 h-18 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-white to-gray-100 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gray-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute bottom-8 -right-12 w-18 h-22 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-blue-300 to-blue-400 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></div>
-                </div>
-
-                {/* Male Model - Positioned to the right of mirror */}
-                <div className="absolute -right-20 top-1/2 transform -translate-y-1/2">
-                  <div className="relative">
-                    {/* Model Silhouette */}
-                    <div className="w-32 h-48 bg-gradient-to-b from-blue-100 to-blue-200 rounded-full relative">
-                      {/* Head */}
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-blue-100 rounded-full"></div>
-                      {/* Hair */}
-                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-14 h-8 bg-black rounded-full"></div>
-                      {/* Blue Blazer */}
-                      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-blue-400 rounded-lg"></div>
-                      {/* White Shirt */}
-                      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-12 h-8 bg-white rounded-lg"></div>
-                      {/* Dark Trousers */}
-                      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-20 bg-gray-800 rounded-lg"></div>
-                      {/* Hand in pocket */}
-                      <div className="absolute bottom-12 -left-2 w-4 h-6 bg-blue-100 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Navigation Bar */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-        <div className="bg-black/40 backdrop-blur-lg rounded-full px-8 py-4 flex items-center gap-8">
-          <button className="text-white hover:text-blue-300 transition-colors">
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-            </svg>
-          </button>
-          <button className="text-white hover:text-blue-300 transition-colors">
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
-            </svg>
-          </button>
-          <button className="text-white hover:text-blue-300 transition-colors">
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd"/>
-            </svg>
-          </button>
-          <button className="text-white hover:text-blue-300 transition-colors">
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
+   <>
+      <HeroSectionMale/>
+      <OutfitRecommendations/>
+      <OccasionRecommendations/>
+      <MarqueeText/>
+      <ProductGrid/>
+   </>
   );
 };
 

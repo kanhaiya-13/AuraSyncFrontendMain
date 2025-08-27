@@ -1,8 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
   "/male/page": "app/male/page.js",
-  "/male/recommendations/page": "app/male/recommendations/page.js",
-  "/search-categories/page": "app/search-categories/page.js",
-  "/onboarding/page": "app/onboarding/page.js"
+  "/page": "app/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/female/page": "app/female/page.js"
 }
