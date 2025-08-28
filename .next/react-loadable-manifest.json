@@ -4,29 +4,5 @@
     "files": [
       "static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js"
     ]
-  },
-  "app\\page.tsx -> ../components/AuraSyncSlideReveal": {
-    "id": "app\\page.tsx -> ../components/AuraSyncSlideReveal",
-    "files": [
-      "static/chunks/_app-pages-browser_src_components_AuraSyncSlideReveal_tsx.js"
-    ]
-  },
-  "app\\page.tsx -> ../components/FAQ": {
-    "id": "app\\page.tsx -> ../components/FAQ",
-    "files": [
-      "static/chunks/_app-pages-browser_src_components_FAQ_tsx.js"
-    ]
-  },
-  "app\\page.tsx -> ../components/InteractiveCards": {
-    "id": "app\\page.tsx -> ../components/InteractiveCards",
-    "files": [
-      "static/chunks/_app-pages-browser_src_components_InteractiveCards_tsx.js"
-    ]
-  },
-  "app\\page.tsx -> ../components/Navbar": {
-    "id": "app\\page.tsx -> ../components/Navbar",
-    "files": [
-      "static/chunks/_app-pages-browser_src_components_Navbar_tsx.js"
-    ]
   }
 }

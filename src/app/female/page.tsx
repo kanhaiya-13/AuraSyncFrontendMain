@@ -6,6 +6,11 @@ import GenderNavbar from '../../components/GenderNavbar';
 import FaceAnalysisWidget from '../../components/FaceAnalysisWidget';
 import BodyAnalysisWidget from '../../components/BodyAnalysisWidget';
 import SkinToneAnalysisWidget from '../../components/SkinToneAnalysisWidget';
+import HeroFemale from '@/components/female/HeroFemale';
+import OutfitRecommendations from '@/components/female/OutfitRecommendations';
+import OccasionRecommendations from '@/components/female/OccasionRecommendation';
+import MarqueeText from '@/components/female/MarqueeText';
+import ProductGrid from '@/components/female/ProductGrid';
 
 // Analysis steps
 const ANALYSIS_STEPS = [
@@ -37,109 +42,10 @@ interface Product {
 const Hero = () => {
   return (
     <section className="min-h-screen relative overflow-hidden">
-      {/* Background Gradient - Exact match */}
-      <div className="absolute inset-0 z-0">
-        <div className="w-full h-full bg-gradient-to-r from-purple-900 via-purple-800 to-teal-400"></div>
-      </div>
-
-      {/* Content Overlay */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content - Text */}
-            <div className="text-left space-y-6 z-10">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight drop-shadow-lg">
-                Stop fighting your wardrobe.{' '}
-                <span className="block">
-                  Start flexing it.
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-lg">
-                AuraSync finds what really works for you.
-              </p>
-            </div>
-
-            {/* Right Side - Smart Mirror and Model */}
-            <div className="relative z-10 flex justify-center lg:justify-end">
-              <div className="relative">
-                {/* Pink Neon Ring */}
-                <div className="absolute inset-0 w-96 h-96 border-4 border-pink-400 rounded-full blur-sm opacity-60 animate-pulse"></div>
-                
-                {/* Smart Mirror */}
-                <div className="relative w-80 h-96 bg-white/20 backdrop-blur-lg rounded-2xl border-2 border-white/30 p-6 shadow-2xl">
-                  {/* AI Interface */}
-                  <div className="text-center text-white mb-6">
-                    <div className="text-3xl font-bold mb-2">AI</div>
-                    <div className="text-sm opacity-80">Style Analysis</div>
-                  </div>
-                  
-                  {/* Skin Tone Swatches */}
-                  <div className="grid grid-cols-6 gap-2 mb-6">
-                    {['#f5d0c5', '#e6c3a3', '#d4a574', '#b87c5c', '#8b4513', '#654321'].map((color, index) => (
-                      <div
-                        key={index}
-                        className="w-8 h-8 rounded-full border-2 border-white/50"
-                        style={{ backgroundColor: color }}
-                      ></div>
-                    ))}
-                  </div>
-                  
-                  {/* Face Outline */}
-                  <div className="flex justify-center">
-                    <div className="w-16 h-20 border-2 border-white/60 rounded-full relative">
-                      <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/60 rounded-full"></div>
-                      <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/60 rounded-full ml-3"></div>
-                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-white/60 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Floating Clothing Cards */}
-                <div className="absolute -top-8 -left-12 w-20 h-24 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-pink-200 to-pink-300 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-pink-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute -top-4 -right-8 w-16 h-20 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-red-200 to-red-300 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute top-8 -right-4 w-14 h-18 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-white to-gray-100 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gray-400 rounded-full"></div>
-                </div>
-                
-                <div className="absolute bottom-8 -right-12 w-18 h-22 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 p-2">
-                  <div className="w-full h-full bg-gradient-to-br from-red-300 to-red-400 rounded"></div>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                </div>
-
-                {/* Female Model - Positioned to the right of mirror */}
-                <div className="absolute -right-20 top-1/2 transform -translate-y-1/2">
-                  <div className="relative">
-                    {/* Model Silhouette */}
-                    <div className="w-32 h-48 bg-gradient-to-b from-pink-100 to-pink-200 rounded-full relative">
-                      {/* Head */}
-                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-pink-100 rounded-full"></div>
-                      {/* Hair */}
-                      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-14 h-8 bg-black rounded-full"></div>
-                      {/* Pink Blazer */}
-                      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-pink-400 rounded-lg"></div>
-                      {/* White T-shirt */}
-                      <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-12 h-8 bg-white rounded-lg"></div>
-                      {/* Dark Trousers */}
-                      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-20 bg-gray-800 rounded-lg"></div>
-                      {/* Hand in pocket */}
-                      <div className="absolute bottom-12 -left-2 w-4 h-6 bg-pink-100 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    
+    
+     
+      <HeroFemale/>
 
       {/* Bottom Navigation Bar - Exact match */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
@@ -478,10 +384,11 @@ const FemaleHome = () => {
 export default function FemaleLanding() {
   return (
     <div className="min-h-screen bg-black">
-      <GenderNavbar gender="female" />
-      <div className="pt-16">
         <FemaleHome />
-      </div>
+        <OutfitRecommendations/>
+        <OccasionRecommendations/>
+        <MarqueeText/>
+        <ProductGrid/>
     </div>
   );
 }
