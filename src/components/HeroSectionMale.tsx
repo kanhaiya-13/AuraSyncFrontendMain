@@ -25,11 +25,11 @@ const HeroSectionMale = () => {
 
       {/* Content Overlay */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="px-5 mx-auto w-full h-full">
+          <div className="grid lg:grid-cols-2 gap-12  h-screen items-end">
             {/* Left Content */}
-            <div className="text-left space-y-6 z-10">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight drop-shadow-lg">
+            <div className=" pt-[60vh] h-full items-end space-y-6 z-10">
+              <h1 className="text-[clamp(2rem,3vw,4rem)] font-semibold text-white leading-tight drop-shadow-lg">
                 Your Aura called.{' '}
                 <span className="block">
                   It wants a better outfit.

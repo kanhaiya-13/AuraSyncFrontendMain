@@ -1,9 +1,11 @@
-'use client';
-
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube } from "react-icons/fa";
-import Link from 'next/link';
+import Navbar from "./Navbar";
+import StickyHeader from "@/components/StickyHeader";
+import MobileHero from '@/app/assets/HeroGuestMobile.png'
+import Image from "next/image";
+
 
 export default function AuraSyncSlideReveal() {
   const [loading, setLoading] = useState(true);
@@ -13,10 +15,10 @@ export default function AuraSyncSlideReveal() {
 
   useEffect(() => {
     if (!loading) return;
-    let start: number | null = null;
+    let start = null;
     const duration = 1800;
 
-    const animateBar = (ts: number) => {
+    const animateBar = (ts) => {
       if (!start) start = ts;
       const elapsed = ts - start;
       const percent = Math.min((elapsed / duration) * 100, 100);
@@ -38,13 +40,57 @@ export default function AuraSyncSlideReveal() {
         setShowContent(true);
         // Dispatch custom event when animation is complete
         window.dispatchEvent(new CustomEvent('landingAnimationComplete'));
+        // Add class to body for navbar visibility
+        document.body.classList.add('landing-complete');
       }, 300);
       return () => clearTimeout(timeout);
     }
   }, [circleDone]);
 
+  // Handle page reload from scrolled position
+  useEffect(() => {
+    const handleReload = () => {
+      // If page is reloaded while scrolled down, show content immediately
+      if (window.scrollY > 100 || document.documentElement.scrollTop > 100) {
+        setShowContent(true);
+        document.body.classList.add('landing-complete');
+        window.dispatchEvent(new CustomEvent('landingAnimationComplete'));
+      }
+    };
+
+    // Check on mount
+    handleReload();
+    
+    // Also check after a short delay to ensure DOM is ready
+    setTimeout(handleReload, 100);
+    setTimeout(handleReload, 500);
+    setTimeout(handleReload, 1000);
+    
+    window.addEventListener('load', handleReload);
+    window.addEventListener('DOMContentLoaded', handleReload);
+    
+    return () => {
+      window.removeEventListener('load', handleReload);
+      window.removeEventListener('DOMContentLoaded', handleReload);
+    };
+  }, []);
+
+  // Simple navbar visibility trigger
+  useEffect(() => {
+    if (showContent) {
+      // Trigger navbar visibility when homepage content is shown
+      document.body.classList.add('landing-complete');
+      window.dispatchEvent(new CustomEvent('landingAnimationComplete'));
+    }
+  }, [showContent]);
+
   return (
     <div className={`relative w-full h-screen overflow-hidden ${loading ? "bg-white" : "bg-black"} transition-colors duration-500`}>
+      {/* Sticky Header - Always visible after landing animation */}
+      {showContent && <StickyHeader />}
+      
+      {/* Navbar - Always visible after landing animation */}
+      {showContent && <Navbar />}
 
       {/* 🔄 Minimal Loader */}
       <AnimatePresence>
@@ -58,19 +104,23 @@ export default function AuraSyncSlideReveal() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
-              className="text-5xl md:text-7xl font-extrabold text-black mb-8"
+              className="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-12"
+              style={{ color: '#B2B2B2' }}
             >
               AuraSync
             </motion.h1>
             <motion.div
               initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 280, opacity: 1 }}
+              animate={{ width: 380, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="relative h-1 bg-gray-300 rounded-full overflow-hidden"
+              className="relative h-2 bg-gray-300 rounded-full overflow-hidden"
             >
               <div
-                className="h-full bg-black transition-all ease-linear"
-                style={{ width: `${progress}%` }}
+                className="h-full transition-all ease-linear"
+                style={{ 
+                  width: `${progress}%`,
+                  backgroundColor: '#525252'
+                }}
               />
             </motion.div>
           </motion.div>
@@ -86,7 +136,7 @@ export default function AuraSyncSlideReveal() {
           onAnimationComplete={() => setCircleDone(true)}
           className="fixed inset-0 flex items-center justify-center z-40"
         >
-          <div className="w-40 h-40 bg-black rounded-full" />
+          <div className="w-40 h-40 rounded-full" style={{ backgroundColor: '#525252' }} />
         </motion.div>
       )}
 
@@ -108,30 +158,15 @@ export default function AuraSyncSlideReveal() {
             />
 
             {/* Mobile Image */}
-            <motion.img
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.4, ease: "easeOut" }}
-              src="/Homepage2.png"
+            <Image
+
+              src={MobileHero}
               alt="Mobile Background"
               className="block md:hidden w-full h-full object-cover"
-              draggable={false}
             />
           </>
 
-          {/* Topbar: Logo + Auth */}
-          <div className="absolute top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <span className="text-white text-xl font-semibold hidden sm:inline">AuraSync</span>
-            </div>
-
-            {/* Auth Links */}
-            <div className="space-x-6 text-white font-medium text-sm md:text-base">
-              <Link href="/login" className="hover:underline">Login</Link>
-              <Link href="/signup" className="hover:underline">Sign-up</Link>
-            </div>
-          </div>
+          {/* Sticky header is now handled by StickyHeader component */}
 
           {/* Center Text */}
           <motion.div
@@ -145,31 +180,25 @@ export default function AuraSyncSlideReveal() {
                 id="hero-heading"
                 className="text-3xl md:text-5xl font-bold"
               >
-                Let&apos;s Explore Unique Clothes
+                Let's Explore Unique Clothes
               </h1>
               <p className="mt-4 text-base md:text-lg font-light">
                 According to your style and preference with{" "}
                 <span className="font-semibold">AuraSync</span>
               </p>
-              <Link href="/onboarding">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-8 px-10 py-6 text-3xl font-bold rounded-2xl bg-gradient-to-r from-pink-500 to-yellow-400 shadow-xl hover:shadow-2xl transition-all duration-300"
-                >
-                  Start Your Analysis
-                </motion.button>
-              </Link>
             </div>
           </motion.div>
 
           {/* Social Icons */}
           <div className="absolute bottom-6 right-6 z-50 flex flex-col space-y-4 text-white text-xl">
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition-colors"><FaInstagram /></a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors"><FaFacebookF /></a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition-colors"><FaTwitter /></a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors"><FaLinkedinIn /></a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-500 transition-colors"><FaYoutube /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500"><FaInstagram /></a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500"><FaFacebookF /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400"><FaTwitter /></a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400" > <FaLinkedinIn />
+  </a>
+  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-500" >
+    <FaYoutube />
+  </a>
           </div>
         </div>
       )}

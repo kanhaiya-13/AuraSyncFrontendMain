@@ -1,46 +1,61 @@
-'use client';
+"use client";
 
-import { usePathname, useRouter } from "next/navigation";
 import { Home, Search, User, UserCircle } from "lucide-react";
-import { motion } from "framer-motion";
-
-const navItems = [
-  { href: "/", icon: <Home className="h-6 w-6" />, label: "Home" },
-  { href: "/search-categories", icon: <Search className="h-6 w-6" />, label: "Search" },
-  { href: "/analysis-v2/force", icon: <UserCircle className="h-6 w-6" />, label: "Analysis" },
-  { href: "/login", icon: <User className="h-6 w-6" />, label: "Profile" },
-];
+import Image from "next/image";
+import HairIcon from '@/app/assets/iconHair.png'
+import { useEffect, useState } from "react";
 
 export default function BottomNav() {
-  const router = useRouter();
-  const pathname = usePathname();
 
+ const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      console.log(currentY);
+
+      // 👉 change 200 to whatever height you want
+      if (currentY > 200) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // run once on mount
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90vw] sm:w-[50vw] md:w-[30vw] 
-      bg-slate-800 text-white flex justify-around items-center py-3 px-4 rounded-2xl shadow-lg
-      backdrop-blur-md border border-slate-700 z-50">
-      {navItems.map((item, index) => {
-        const isActive = pathname === item.href;
-        return (
-          <button
-            key={index}
-            onClick={() => router.push(item.href)}
-            className="relative flex flex-col items-center focus:outline-none"
-          >
-            <motion.div
-              animate={{
-                scale: isActive ? 1.2 : 1,
-                color: isActive ? "#60A5FA" : "#ffffff", // blue-400 when active
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="flex flex-col items-center"
-            >
-              {item.icon}
-              <span className="text-xs mt-1">{item.label}</span>
-            </motion.div>
-          </button>
-        );
-      })}
+    <nav className={` ${scrolled?"hidden":"fixed"}   bottom-10 left-1/2 -translate-x-1/2 bg-neutral-800 text-white flex items-center justify-around gap-4 px-6 py-3 rounded-2xl shadow-lg w-[70%] max-w-md`}>
+      {/* Home */}
+      <button className="flex flex-col items-center">
+        <Home className="h-8 w-8" />
+      </button>
+
+      <div className="h-6 w-px bg-gray-600" />
+
+      {/* Search */}
+      <button className="flex flex-col items-center">
+        <Search className="h-8 w-8" />
+      </button>
+
+      <div className="h-6 w-px bg-gray-600" />
+
+      {/* UserCircle */}
+      <button className="flex flex-col items-center">
+        <Image src={HairIcon} width={30} height={20} alt="hair icon"/>
+      </button>
+
+      <div className="h-6 w-px bg-gray-600" />
+
+      {/* Profile */}
+      <button className="flex flex-col items-center">
+        <User className="h-8 w-8" />
+      </button>
     </nav>
   );
 }

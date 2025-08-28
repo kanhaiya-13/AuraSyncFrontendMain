@@ -1,123 +1,94 @@
-'use client';
+import { useState, useEffect, Children, cloneElement } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiHome, FiAlertCircle, FiPhoneCall, FiBookOpen } from "react-icons/fi";
+import { useMediaQuery } from "react-responsive";
 
-import React, { useState, useRef, useEffect, Children, cloneElement } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { FiHome, FiBookOpen, FiSearch, FiUser, FiShoppingBag } from 'react-icons/fi';
-import { useMediaQuery } from 'react-responsive';
-
-const NavItem = ({
-  children,
-  className = "",
-  onClick,
-  mouseX,
-  mouseY,
-  spring,
-  distance,
-  magnification,
-  baseItemSize,
-  isMobile
-}: {
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-  mouseX: any;
-  mouseY: any;
-  spring: any;
-  distance: number;
-  magnification: number;
-  baseItemSize: number;
-  isMobile: boolean;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isHovered = useMotionValue(0);
-
-  const mouseDistance = useTransform(isMobile ? mouseX : mouseY, (val: number) => {
-    const rect = ref.current?.getBoundingClientRect() ?? {
-      x: 0,
-      y: 0,
-      width: baseItemSize,
-      height: baseItemSize
-    };
-    return isMobile
-      ? val - rect.x - baseItemSize / 2
-      : val - rect.y - baseItemSize / 2;
-  });
-
-  const targetSize = useTransform(
-    mouseDistance,
-    [-distance, 0, distance],
-    [baseItemSize, magnification, baseItemSize]
-  );
-  const size = useSpring(targetSize, spring);
+const NavItem = ({ children, className = "", onClick, isMobile }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div
-      ref={ref}
-      style={{ width: size, height: size }}
-      onHoverStart={() => isHovered.set(1)}
-      onHoverEnd={() => isHovered.set(0)}
-      onFocus={() => isHovered.set(1)}
-      onBlur={() => isHovered.set(0)}
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
-      className={`relative flex items-center justify-center rounded-lg bg-gray-900 shadow-md focus:outline-none ${className}`}
+      className={`relative flex items-center justify-center ${
+        isMobile ? "w-10 h-10" : "w-14 h-14"
+      } focus:outline-none transition-all duration-200 ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
     >
       {Children.map(children, (child) =>
-        cloneElement(child as React.ReactElement, { isHovered, isMobile })
+        cloneElement(child, { isHovered, isMobile })
       )}
-    </motion.div>
+    </div>
   );
 };
 
-const NavIcon = ({ children, className = "" }: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div className={`flex items-center justify-center text-white ${className}`}>
-    {children}
-  </div>
-);
+const NavIcon = ({ children, className = "", isHovered }) => {
+  return (
+    <div
+      className={`flex items-center justify-center transition-all duration-200 ${className}`}
+    >
+      <div
+        className={`text-white transition-all duration-200 ${
+          isHovered ? "scale-110 text-gray-300" : "text-white"
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
 
-const Navbar = () => {
-  const pathname = usePathname();
-  const router = useRouter();
+const Navbar = ({
+  items = [
+    { icon: <FiHome size={24} />, label: "Home", onClick: () => alert("Home!") },
+    { icon: <FiAlertCircle size={24} />, label: "Info", onClick: () => alert("Info!") },
+    { icon: <FiPhoneCall size={24} />, label: "Contact", onClick: () => alert("Contact!") },
+    { icon: <FiBookOpen size={24} />, label: "Guide", onClick: () => alert("Guide!") },
+  ],
+  className = "",
+}) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const mouseX = useMotionValue(Infinity);
-  const mouseY = useMotionValue(Infinity);
-  const isHovered = useMotionValue(0);
-  const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [menuTopPosition, setMenuTopPosition] = useState('50%');
+  const [menuTopPosition, setMenuTopPosition] = useState("50%");
+  const [landingComplete, setLandingComplete] = useState(false);
 
-  const items = [
-    { icon: <FiHome size={20} />, label: "Home", onClick: () => router.push('/') },
-    { icon: <FiSearch size={20} />, label: "Search", onClick: () => router.push('/search-categories') },
-    { icon: <FiShoppingBag size={20} />, label: "Analysis", onClick: () => router.push('/analysis-v2/force') },
-    { icon: <FiUser size={20} />, label: "Profile", onClick: () => router.push('/login') },
-    { icon: <FiBookOpen size={20} />, label: "About", onClick: () => router.push('/about') },
-  ];
-
-  // Ensure client-side rendering only
+  // ✅ Handle scroll + landing state
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const handleAnimationComplete = () => {
-      setTimeout(() => setIsVisible(true), 500);
+    const checkAndShowNavbar = () => {
+      if (window.scrollY > 0 || landingComplete) {
+        setIsVisible(true);
+      }
     };
-    window.addEventListener('landingAnimationComplete', handleAnimationComplete);
+
+    checkAndShowNavbar();
+    const timer = setTimeout(checkAndShowNavbar, 3000);
+
+    window.addEventListener("scroll", checkAndShowNavbar);
+
+    const handleLandingComplete = () => {
+      setTimeout(() => setLandingComplete(true), 100);
+    };
+
+    if (document.body.classList.contains("landing-complete")) {
+      setLandingComplete(true);
+    }
+
+    window.addEventListener("landingAnimationComplete", handleLandingComplete);
+
     return () => {
-      window.removeEventListener('landingAnimationComplete', handleAnimationComplete);
+      clearTimeout(timer);
+      window.removeEventListener("scroll", checkAndShowNavbar);
+      window.removeEventListener("landingAnimationComplete", handleLandingComplete);
     };
-  }, []);
+  }, [landingComplete]);
 
+  // ✅ Calculate nav position next to hero heading (desktop only)
   useEffect(() => {
     const calculateMenuPosition = () => {
-      const heading = document.getElementById('hero-heading');
+      const heading = document.getElementById("hero-heading");
       if (heading && !isMobile) {
         const headingRect = heading.getBoundingClientRect();
         const headingCenter = headingRect.top + headingRect.height / 2;
@@ -125,64 +96,76 @@ const Navbar = () => {
         setMenuTopPosition(`${adjustedPosition}px`);
       }
     };
+
     calculateMenuPosition();
-    window.addEventListener('resize', calculateMenuPosition);
+    window.addEventListener("resize", calculateMenuPosition);
     const timeoutId = setTimeout(calculateMenuPosition, 100);
+
     return () => {
-      window.removeEventListener('resize', calculateMenuPosition);
+      window.removeEventListener("resize", calculateMenuPosition);
       clearTimeout(timeoutId);
     };
   }, [isMobile, isVisible]);
 
-  if (!mounted) return null; // prevents hydration error
-
   return (
-    <motion.div
-      key="navbar"
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={isVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed ${isMobile ? "bottom-4 left-1/2 -translate-x-1/2" : "left-4"} z-50`}
-      style={{
-        top: isMobile ? undefined : menuTopPosition,
-        transform: isMobile ? undefined : 'translateY(-50%)',
-        pointerEvents: isVisible ? "auto" : "none"
-      }}
-    >
-      <motion.div
-        onMouseMove={({ clientX, clientY }) => {
-          isHovered.set(1);
-          mouseX.set(clientX);
-          mouseY.set(clientY);
-        }}
-        onMouseLeave={() => {
-          isHovered.set(0);
-          mouseX.set(Infinity);
-          mouseY.set(Infinity);
-        }}
-        className={`flex ${isMobile ? "flex-row divide-x" : "flex-col divide-y"} 
-          divide-gray-700 items-center gap-3 p-2 rounded-full 
-          bg-gray-900 backdrop-blur-md border border-gray-700 shadow-lg`}
-        role="toolbar"
-        aria-label="Application navigation"
-      >
-        {items.map((item, index) => (
-          <NavItem
-            key={index}
-            onClick={item.onClick}
-            mouseX={mouseX}
-            mouseY={mouseY}
-            spring={{ mass: 0.1, stiffness: 150, damping: 12 }}
-            distance={100}
-            magnification={72}
-            baseItemSize={48}
-            isMobile={isMobile}
+    // ✅ Always-mounted wrapper
+    <div className="fixed top-0 left-0 w-full pointer-events-none z-[9999]">
+      <AnimatePresence>
+        {(isVisible || landingComplete) && (
+          <motion.div
+            key="navbar"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className={`absolute ${
+              isMobile
+                ? "bottom-4 left-1/2 transform -translate-x-1/2 max-w-[85vw]"
+                : "left-4"
+            }`}
+            style={{
+              top: isMobile ? undefined : menuTopPosition,
+              transform: isMobile ? "translateX(-50%)" : "translateY(-50%)",
+            }}
           >
-            <NavIcon>{item.icon}</NavIcon>
-          </NavItem>
-        ))}
-      </motion.div>
-    </motion.div>
+            <div
+              className={`flex ${
+                isMobile ? "flex-row space-x-1" : "flex-col space-y-2"
+              } items-center ${
+                isMobile ? "py-4 px-1" : "py-8 px-2"
+              } ${className}`}
+              role="toolbar"
+              aria-label="Application navigation"
+              style={{
+                backgroundColor: "#313131",
+                border: "none",
+                borderRadius: "50px",
+                boxShadow: "-5px 5px 4px 0px rgba(0,0,0,0.4)",
+              }}
+            >
+              {items.map((item, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    isMobile
+                      ? index !== items.length - 1
+                        ? "border-r border-gray-600"
+                        : ""
+                      : index !== items.length - 1
+                      ? "border-b border-gray-600"
+                      : ""
+                  }`}
+                >
+                  <NavItem onClick={item.onClick} isMobile={isMobile}>
+                    <NavIcon>{item.icon}</NavIcon>
+                  </NavItem>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

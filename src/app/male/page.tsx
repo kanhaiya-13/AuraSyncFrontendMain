@@ -42,7 +42,7 @@ interface Product {
 const Hero = () => {
   return (
    <>
-   <GenderNavbar gender='male'/>
+   {/* <GenderNavbar gender='male'/> */}
       <HeroSectionMale/>
       <OutfitRecommendations/>
       <OccasionRecommendations/>
@@ -171,12 +171,12 @@ const MaleHome = () => {
         
         {/* Analysis Start Button */}
         <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 z-30">
-          <button
+          {/* <button
             onClick={handleStartAnalysis}
             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-12 py-4 rounded-xl text-2xl font-bold hover:from-blue-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-2xl"
           >
             Start Your Style Analysis
-          </button>
+          </button> */}
         </div>
       </div>
     );

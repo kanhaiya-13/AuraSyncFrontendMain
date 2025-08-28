@@ -82,7 +82,7 @@ const OutfitRecommendations = () => {
               <RecommendationCard {...recommendations[1]} />
             </div>
 
-            <div className="flex  flex-col h-[623px] gap-8 md:gap-6">
+            <div className="flex  flex-col h-[623px] gap-4 md:gap-6">
               <RecommendationCard {...recommendations[0]} />
               <RecommendationCard {...recommendations[3]} />
             </div>

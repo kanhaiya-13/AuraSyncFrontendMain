@@ -1,6 +1,3 @@
 {
-  "/female/page": "app/female/page.js",
-  "/page": "app/page.js",
-  "/onboarding/page": "app/onboarding/page.js",
-  "/male/page": "app/male/page.js"
+  "/page": "app/page.js"
 }

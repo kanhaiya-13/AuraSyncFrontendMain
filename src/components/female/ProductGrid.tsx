@@ -18,7 +18,7 @@ const ProductGrid = () => {
       {/* Product Grid */}
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
@@ -41,6 +41,9 @@ const ProductCard = ({ image, title, price }) => {
           alt={title}
           className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        <div className='absolute bottom-0  h-[50px] w-full bg-black '>
+
+        </div>
       </div>
       
       <div className="mt-4">

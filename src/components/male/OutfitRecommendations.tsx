@@ -1,41 +1,46 @@
 import mensWear from "@/app/assets/mens-wear.jpg";
 import womensWear from "@/app/assets/womens-wear.jpg";
 import streetwear from "@/app/assets/streetwear.jpg";
+import r1 from '@/app/assets/male/rbig.png'
+import r2 from '@/app/assets/male/r2.png'
+import r3 from '@/app/assets/male/r3.png'
+import r4 from '@/app/assets/male/r4.png'
+import r5 from '@/app/assets/male/r1.png'
 import Image from "next/image";
 
 const OutfitRecommendations = () => {
   const recommendations = [
     {
       id: 1,
-      image: mensWear,
+      image: r5,
       label: "Men's Shirts",
       caption: "Discover our latest Men Shirts collection",
       featured: false,
     },
     {
       id: 2,
-      image: womensWear,
+      image: r1,
       label: "Men's Ethnic wear",
       caption: "Discover our latest Men's ethnic wear collection",
       featured: true,
     },
     {
       id: 3,
-      image: streetwear,
+      image: r2,
       label: "Men's Bottomwears",
       caption: "Discover our latest women jacket collection",
       featured: false,
     },
     {
       id: 4,
-      image: mensWear,
+      image: r3,
       label: "Men's T-shirts",
       caption: "Discover our latest Men's T-shirt collection",
       featured: false,
     },
     {
       id: 5,
-      image: womensWear,
+      image: r4,
       label: "Men's Jackets",
       caption: "Discover our latest women jacket collection",
       featured: false,
@@ -61,7 +66,7 @@ const OutfitRecommendations = () => {
 
       {/* Content Section - Responsive Grid Layout */}
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto">
           {/*Desktop Section */}
 
           <div className="md:grid hidden  grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
@@ -113,7 +118,7 @@ const RecommendationCard = ({ image, label, caption, featured }) => {
   return (
     <div
       className={`relative group overflow-hidden border border-white/10 bg-black/10 shadow-lg cursor-pointer ${
-        featured ? "md:h-[624px] md:w-[408px] h-[600px] w-full" : "h-[300px]"
+        featured ? "md:h-[624px]  h-[600px] w-full" : "h-[300px] w-full"
       }`}
     >
       <Image
