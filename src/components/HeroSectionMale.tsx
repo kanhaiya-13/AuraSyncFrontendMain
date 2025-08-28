@@ -36,7 +36,7 @@ const HeroSectionMale = () => {
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-lg">
-                We'll fix that in seconds.
+                We&apos;ll fix that in seconds.
               </p>
             </div>
 
