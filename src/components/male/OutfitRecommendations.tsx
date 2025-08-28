@@ -95,7 +95,7 @@ const OutfitRecommendations = () => {
             </div>
 
             {/* Column 3 (mobile: full width stacked) */}
-            <div className="col-span-2 flex flex-col gap-4 md:gap-6">
+            <div className="col-span-2  grid grid-cols-2 gap-4 md:gap-6">
               <RecommendationCard {...recommendations[2]} />
               <RecommendationCard {...recommendations[4]} />
             </div>

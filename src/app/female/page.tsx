@@ -384,11 +384,14 @@ const FemaleHome = () => {
 export default function FemaleLanding() {
   return (
     <div className="min-h-screen bg-black">
-        <FemaleHome />
+      <GenderNavbar gender='female'/>
+       <div>
+         <FemaleHome />
         <OutfitRecommendations/>
         <OccasionRecommendations/>
         <MarqueeText/>
         <ProductGrid/>
+       </div>
     </div>
   );
 }

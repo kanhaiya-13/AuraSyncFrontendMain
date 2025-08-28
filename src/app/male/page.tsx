@@ -42,6 +42,7 @@ interface Product {
 const Hero = () => {
   return (
    <>
+   <GenderNavbar gender='male'/>
       <HeroSectionMale/>
       <OutfitRecommendations/>
       <OccasionRecommendations/>
