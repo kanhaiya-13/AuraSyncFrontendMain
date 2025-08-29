@@ -36,8 +36,8 @@ interface UserData {
   body_shape: string | null;
   personality: string | null;
   onboarding_completed: boolean;
-  created_at:string;
-  is_new_user:string;
+  created_at?: string;
+  is_new_user: string;
 }
 
 interface Product {
@@ -61,7 +61,6 @@ export default function Onboarding() {
     face_shape: null,
     body_shape: null,
     personality: null,
-    created_at:'',
     is_new_user:'',
     onboarding_completed: false
   });
@@ -71,8 +70,8 @@ export default function Onboarding() {
 const authenticateWithBackend = async (firebaseUser) => {
   try {
     const idToken = await firebaseUser.getIdToken();
-    
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify-user`, {
+    // ${process.env.NEXT_PUBLIC_BACKEND_URL}
+    const response = await fetch(`http://localhost:8000/auth/verify-user`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,
@@ -80,13 +79,16 @@ const authenticateWithBackend = async (firebaseUser) => {
       },
       body: JSON.stringify({
         name: firebaseUser.displayName,
-        profile_picture: firebaseUser.photoURL
+        profile_picture: firebaseUser.photoURL,
+        email: firebaseUser.email,
+        firebase_id: firebaseUser.uid
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.detail || 'Backend authentication failed');
+      console.error('Backend error response:', errorData);
+      throw new Error(errorData.detail || `Backend authentication failed with status ${response.status}`);
     }
 
     return await response.json();
@@ -111,8 +113,8 @@ const authenticateWithBackend = async (firebaseUser) => {
       const loggedInUser:UserData = {
         id: backendUserData.id,
         email: backendUserData.email,
-        name: backendUserData.name || '',
-        profile_picture: backendUserData.profile_picture,
+        name: firebaseUser.displayName || '',
+        profile_picture: firebaseUser.photoURL || '',
         gender: '',
         location: '',
         skin_tone: '',
@@ -120,21 +122,8 @@ const authenticateWithBackend = async (firebaseUser) => {
         body_shape: null,
         personality: null,
         onboarding_completed: false,
-        created_at: backendUserData.created_at,
         is_new_user: backendUserData.is_new_user
       };
-
-        // const loggedInUser: UserData = {
-        //   email: firebaseUser.email || '',
-        //   name: firebaseUser.displayName || '',
-        //   gender: '',
-        //   location: '',
-        //   skin_tone: '',
-        //   face_shape: null,
-        //   body_shape: null,
-        //   personality: null,
-        //   onboarding_completed: false
-        // };
 
       setUserData(loggedInUser);
       setUserDataState(loggedInUser);
