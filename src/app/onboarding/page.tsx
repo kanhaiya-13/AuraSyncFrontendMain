@@ -25,8 +25,10 @@ const STEPS = {
 type StepType = typeof STEPS[keyof typeof STEPS];
 
 interface UserData {
+  id:string;
   email: string;
   name: string;
+  profile_picture: string;
   gender: 'male' | 'female' | '';
   location: string;
   skin_tone: string;
@@ -34,6 +36,8 @@ interface UserData {
   body_shape: string | null;
   personality: string | null;
   onboarding_completed: boolean;
+  created_at:string;
+  is_new_user:string;
 }
 
 interface Product {
@@ -47,39 +51,101 @@ export default function Onboarding() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<StepType>(STEPS.LOGIN);
   const [userData, setUserDataState] = useState<UserData>({
+    id:'',
     email: '',
     name: '',
+    profile_picture:'',
     gender: '',
     location: '',
     skin_tone: '',
     face_shape: null,
     body_shape: null,
     personality: null,
+    created_at:'',
+    is_new_user:'',
     onboarding_completed: false
   });
 
+
+  // Optional: Create a separate utility function for backend authentication
+const authenticateWithBackend = async (firebaseUser) => {
+  try {
+    const idToken = await firebaseUser.getIdToken();
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify-user`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${idToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: firebaseUser.displayName,
+        profile_picture: firebaseUser.photoURL
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Backend authentication failed');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Backend authentication error:', error);
+    throw error;
+  }
+};
 
   // Step 1: Login Component
   const LoginStep = () => {
     const handleGoogleLogin = async () => {
       try {
+        // Step 1: Firebase Authentication
         const result = await signInWithPopup(auth, googleProvider);
         const firebaseUser = result.user;
 
-        const loggedInUser: UserData = {
-          email: firebaseUser.email || '',
-          name: firebaseUser.displayName || '',
-          gender: '',
-          location: '',
-          skin_tone: '',
-          face_shape: null,
-          body_shape: null,
-          personality: null,
-          onboarding_completed: false
-        };
+      // Backend authentication and user registration
+      const backendUserData = await authenticateWithBackend(firebaseUser);
 
-        setUserData(loggedInUser);
-        setUserDataState(loggedInUser);
+            // Create combined user data
+      const loggedInUser:UserData = {
+        id: backendUserData.id,
+        email: backendUserData.email,
+        name: backendUserData.name || '',
+        profile_picture: backendUserData.profile_picture,
+        gender: '',
+        location: '',
+        skin_tone: '',
+        face_shape: null,
+        body_shape: null,
+        personality: null,
+        onboarding_completed: false,
+        created_at: backendUserData.created_at,
+        is_new_user: backendUserData.is_new_user
+      };
+
+        // const loggedInUser: UserData = {
+        //   email: firebaseUser.email || '',
+        //   name: firebaseUser.displayName || '',
+        //   gender: '',
+        //   location: '',
+        //   skin_tone: '',
+        //   face_shape: null,
+        //   body_shape: null,
+        //   personality: null,
+        //   onboarding_completed: false
+        // };
+
+      setUserData(loggedInUser);
+      setUserDataState(loggedInUser);
+
+      // Navigate based on user type
+      if (backendUserData.is_new_user) {
+        console.log('New user - starting onboarding');
+      } else {
+        console.log('Returning user');
+      }
+
         setCurrentStep(STEPS.BASIC_INFO);
       } catch (error) {
         console.error('Google sign-in failed:', error);
