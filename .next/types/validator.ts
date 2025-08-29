@@ -35,19 +35,6 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
   viewport?: any
 }
 
-type ApiRouteConfig = {
-  default: (req: any, res: any) => Promise<Response | void> | Response | void
-  config?: {
-    api?: {
-      bodyParser?: boolean | { sizeLimit?: string }
-      responseLimit?: string | number | boolean
-      externalResolver?: boolean
-    }
-    runtime?: 'edge' | 'experimental-edge' | 'nodejs' | string // necessary unless config is exported as const
-    maxDuration?: number
-  }
-}
-
 
 // Validate ../../src/app/(auth)/login/page.tsx
 {
@@ -131,11 +118,7 @@ type ApiRouteConfig = {
 
 
 
-// Validate ../../src/pages/api/auth/[...nextauth].ts
-{
-  const handler = {} as typeof import("../../src/pages/api/auth/[...nextauth].js")
-  handler satisfies ApiRouteConfig
-}
+
 
 // Validate ../../src/app/(auth)/layout.tsx
 {

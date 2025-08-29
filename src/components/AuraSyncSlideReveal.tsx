@@ -15,12 +15,12 @@ export default function AuraSyncSlideReveal() {
 
   useEffect(() => {
     if (!loading) return;
-    let start = null;
+    let startTimestamp: number | undefined;
     const duration = 1800;
 
-    const animateBar = (ts) => {
-      if (!start) start = ts;
-      const elapsed = ts - start;
+    const animateBar = (ts: number) => {
+      if (startTimestamp === undefined) startTimestamp = ts;
+      const elapsed = ts - startTimestamp;
       const percent = Math.min((elapsed / duration) * 100, 100);
       setProgress(percent);
 
@@ -180,7 +180,7 @@ export default function AuraSyncSlideReveal() {
                 id="hero-heading"
                 className="text-3xl md:text-5xl font-bold"
               >
-                Let's Explore Unique Clothes
+                Let&apos;s Explore Unique Clothes
               </h1>
               <p className="mt-4 text-base md:text-lg font-light">
                 According to your style and preference with{" "}

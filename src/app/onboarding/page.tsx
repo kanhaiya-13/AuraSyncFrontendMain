@@ -9,6 +9,8 @@ import FaceAnalysisWidget from '../../components/FaceAnalysisWidget';
 import SkinToneAnalysisWidget from '../../components/SkinToneAnalysisWidget';
 import BodyAnalysisWidget from '../../components/BodyAnalysisWidget';
 import PersonalityAnalysisWidget from '../../components/PersonalityAnalysisWidget';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../lib/firebase';
 
 // Onboarding steps
 const STEPS = {
@@ -59,23 +61,30 @@ export default function Onboarding() {
 
   // Step 1: Login Component
   const LoginStep = () => {
-    const handleGoogleLogin = () => {
-      // Simulate Google login - in real app, integrate with Google OAuth
-      const mockUserData: UserData = {
-        email: 'user@gmail.com',
-        name: '',
-        gender: '',
-        location: 'Mumbai',
-        skin_tone: '',
-        face_shape: null,
-        body_shape: null,
-        personality: null,
-        onboarding_completed: false
-      };
-      
-      setUserData(mockUserData);
-      setUserDataState(mockUserData);
-      setCurrentStep(STEPS.BASIC_INFO);
+    const handleGoogleLogin = async () => {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const firebaseUser = result.user;
+
+        const loggedInUser: UserData = {
+          email: firebaseUser.email || '',
+          name: firebaseUser.displayName || '',
+          gender: '',
+          location: '',
+          skin_tone: '',
+          face_shape: null,
+          body_shape: null,
+          personality: null,
+          onboarding_completed: false
+        };
+
+        setUserData(loggedInUser);
+        setUserDataState(loggedInUser);
+        setCurrentStep(STEPS.BASIC_INFO);
+      } catch (error) {
+        console.error('Google sign-in failed:', error);
+        alert('Google sign-in failed. Please try again.');
+      }
     };
 
     return (

@@ -3,7 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn } from "next-auth/react";
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../../lib/firebase';
 
 const LoginPage = () => {
   const router = useRouter();
@@ -86,7 +87,15 @@ const LoginPage = () => {
 
         <div className="mt-4">
           <button
-            onClick={() => signIn("google")}
+            onClick={async () => {
+              try {
+                await signInWithPopup(auth, googleProvider);
+                router.push('/onboarding');
+              } catch (err) {
+                console.error('Firebase sign-in failed:', err);
+                alert('Google sign-in failed. Please try again.');
+              }
+            }}
             className="bg-white text-black px-6 py-3 rounded shadow font-bold text-lg hover:bg-gray-200 transition"
           >
             Sign in with Google
