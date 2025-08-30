@@ -50,6 +50,7 @@ interface Product {
 export default function Onboarding() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<StepType>(STEPS.LOGIN);
+  const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserDataState] = useState<UserData>({
     id:'',
     email: '',
@@ -64,6 +65,97 @@ export default function Onboarding() {
     is_new_user:'',
     onboarding_completed: false
   });
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  // Function to update user data in localStorage
+  const updateUserDataInStorage = (updatedData: Partial<UserData>) => {
+    const currentData = JSON.parse(localStorage.getItem('aurasync_user_data') || '{}');
+    const newData = { ...currentData, ...updatedData };
+    localStorage.setItem('aurasync_user_data', JSON.stringify(newData));
+    setUserDataState(newData);
+  };
+
+  const checkAuthStatus = async () => {
+    try {
+      setIsLoading(true);
+      const currentUser = auth.currentUser;
+      
+      if (currentUser) {
+        // User is logged in with Firebase, verify with backend
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch(`http://localhost:8000/auth/verify-user`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${idToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: currentUser.displayName,
+            profile_picture: currentUser.photoURL,
+            email: currentUser.email,
+            firebase_id: currentUser.uid
+          })
+        });
+
+        if (response.ok) {
+          const backendUserData = await response.json();
+          
+          // Create combined user data
+          const loggedInUser: UserData = {
+            id: backendUserData.id,
+            email: backendUserData.email,
+            name: currentUser.displayName || '',
+            profile_picture: currentUser.photoURL || '',
+            gender: backendUserData.gender || '',
+            location: backendUserData.location || '',
+            skin_tone: backendUserData.skin_tone || '',
+            face_shape: backendUserData.face_shape,
+            body_shape: backendUserData.body_shape,
+            personality: backendUserData.personality,
+            onboarding_completed: backendUserData.onboarding_completed || false,
+            is_new_user: backendUserData.is_new_user
+          };
+
+          setUserData(loggedInUser);
+          setUserDataState(loggedInUser);
+
+          // Store user data in localStorage for other pages to access
+          localStorage.setItem('aurasync_user_data', JSON.stringify(loggedInUser));
+
+          // Check onboarding completion and redirect accordingly
+          if (loggedInUser.onboarding_completed) {
+            // User has completed onboarding, redirect based on gender
+            if (loggedInUser.gender === 'male') {
+              router.push('/male');
+            } else if (loggedInUser.gender === 'female') {
+              router.push('/female');
+            } else {
+              // Fallback to male page if gender is not set
+              router.push('/male');
+            }
+          } else {
+            // User needs to complete onboarding, start from basic info
+            setCurrentStep(STEPS.BASIC_INFO);
+          }
+        } else {
+          // Backend verification failed, show login page
+          setCurrentStep(STEPS.LOGIN);
+        }
+      } else {
+        // No Firebase user, show login page
+        setCurrentStep(STEPS.LOGIN);
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setCurrentStep(STEPS.LOGIN);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   // Optional: Create a separate utility function for backend authentication
@@ -115,27 +207,37 @@ const authenticateWithBackend = async (firebaseUser) => {
         email: backendUserData.email,
         name: firebaseUser.displayName || '',
         profile_picture: firebaseUser.photoURL || '',
-        gender: '',
-        location: '',
-        skin_tone: '',
-        face_shape: null,
-        body_shape: null,
-        personality: null,
-        onboarding_completed: false,
-        is_new_user: backendUserData.is_new_user
+        gender: backendUserData.gender || '',
+        location: backendUserData.location || '',
+        skin_tone: backendUserData.skin_tone || '',
+        face_shape: backendUserData.face_shape || null,
+        body_shape: backendUserData.body_shape || null,
+        personality: backendUserData.personality || null,
+        onboarding_completed: backendUserData.onboarding_completed || false,
+        is_new_user: backendUserData.is_new_user || ''
       };
 
       setUserData(loggedInUser);
       setUserDataState(loggedInUser);
 
-      // Navigate based on user type
-      if (backendUserData.is_new_user) {
-        console.log('New user - starting onboarding');
-      } else {
-        console.log('Returning user');
-      }
+      // Store user data in localStorage for other pages to access
+      localStorage.setItem('aurasync_user_data', JSON.stringify(loggedInUser));
 
+      // Check onboarding completion and navigate accordingly
+      if (loggedInUser.onboarding_completed) {
+        // User has completed onboarding, redirect based on gender
+        if (loggedInUser.gender === 'male') {
+          router.push('/male');
+        } else if (loggedInUser.gender === 'female') {
+          router.push('/female');
+        } else {
+          // Fallback to male page if gender is not set
+          router.push('/male');
+        }
+      } else {
+        // User needs to complete onboarding, start from basic info
         setCurrentStep(STEPS.BASIC_INFO);
+      }
       } catch (error) {
         console.error('Google sign-in failed:', error);
         alert('Google sign-in failed. Please try again.');
@@ -171,18 +273,25 @@ const authenticateWithBackend = async (firebaseUser) => {
               onClick={() => {
                 // For testing - skip to next step
                 const mockUserData: UserData = {
+                  id: '1',
                   email: 'test@gmail.com',
                   name: '',
+                  profile_picture: '',
                   gender: '',
                   location: 'Mumbai',
                   skin_tone: '',
                   face_shape: null,
                   body_shape: null,
                   personality: null,
-                  onboarding_completed: false
+                  onboarding_completed: false,
+                  is_new_user: 'true'
                 };
                 setUserData(mockUserData);
                 setUserDataState(mockUserData);
+                
+                // Store mock user data in localStorage
+                localStorage.setItem('aurasync_user_data', JSON.stringify(mockUserData));
+                
                 setCurrentStep(STEPS.BASIC_INFO);
               }}
               className="text-gray-400 hover:text-white transition-colors"
@@ -203,6 +312,10 @@ const authenticateWithBackend = async (firebaseUser) => {
         const updatedData = { ...userData };
         updateUserData(updatedData);
         setUserDataState(updatedData);
+        
+        // Update localStorage with the new data
+        updateUserDataInStorage(updatedData);
+        
         setCurrentStep(STEPS.SKIN_FACE_ANALYSIS);
       }
     };
@@ -307,6 +420,10 @@ const authenticateWithBackend = async (firebaseUser) => {
         const updatedData = { ...userData, ...analysisData };
         updateUserData(updatedData);
         setUserDataState(updatedData);
+        
+        // Update localStorage with the new data
+        updateUserDataInStorage(updatedData);
+        
         setCurrentStep(STEPS.BODY_ANALYSIS);
       }
     };
@@ -863,6 +980,10 @@ const authenticateWithBackend = async (firebaseUser) => {
       const updatedData = { ...userData, body_shape: analysisData.body_shape };
       updateUserData(updatedData);
       setUserDataState(updatedData);
+      
+      // Update localStorage with the new data
+      updateUserDataInStorage(updatedData);
+      
       setCurrentStep(STEPS.PERSONALITY_ANALYSIS);
     };
 
@@ -1354,12 +1475,16 @@ const authenticateWithBackend = async (firebaseUser) => {
 
   // Step 5: Personality Analysis Component (16 Questions)
   const PersonalityAnalysisStep = () => {
-    const handleNext = (personalityType: string) => {
-      const updatedData = { ...userData, personality: personalityType };
-      updateUserData(updatedData);
-      setUserDataState(updatedData);
-      setCurrentStep(STEPS.COMPLETE);
-    };
+      const handleNext = (personalityType: string) => {
+    const updatedData = { ...userData, personality: personalityType };
+    updateUserData(updatedData);
+    setUserDataState(updatedData);
+    
+    // Update localStorage with the new data
+    updateUserDataInStorage(updatedData);
+    
+    setCurrentStep(STEPS.COMPLETE);
+  };
 
     return (
       <motion.div
@@ -1382,10 +1507,60 @@ const authenticateWithBackend = async (firebaseUser) => {
 
   // Step 6: Complete Component
   const CompleteStep = () => {
-    const handleComplete = () => {
-      markOnboardingCompleted();
-      // Redirect to gender-specific homepage
-      router.push(userData.gender === 'male' ? '/male' : '/female');
+    const handleComplete = async () => {
+      try {
+        // Mark onboarding as completed in the backend
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const idToken = await currentUser.getIdToken();
+          const response = await fetch(`http://localhost:8000/auth/update-onboarding`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              onboarding_completed: true,
+              gender: userData.gender,
+              name: userData.name,
+              skin_tone: userData.skin_tone,
+              face_shape: userData.face_shape,
+              body_shape: userData.body_shape,
+              personality: userData.personality
+            })
+          });
+
+          if (response.ok) {
+            // Store user data in localStorage for other pages to access
+            const userDataForStorage = {
+              ...userData,
+              onboarding_completed: true
+            };
+            localStorage.setItem('aurasync_user_data', JSON.stringify(userDataForStorage));
+            
+            // Redirect to gender-specific homepage
+            if (userData.gender === 'male') {
+              router.push('/male');
+            } else if (userData.gender === 'female') {
+              router.push('/female');
+            } else {
+              // Fallback to male page
+              router.push('/male');
+            }
+          } else {
+            console.error('Failed to update onboarding status');
+            // Still redirect even if update fails
+            router.push(userData.gender === 'male' ? '/male' : '/female');
+          }
+        } else {
+          // No user logged in, redirect anyway
+          router.push(userData.gender === 'male' ? '/male' : '/female');
+        }
+      } catch (error) {
+        console.error('Error completing onboarding:', error);
+        // Redirect even if there's an error
+        router.push(userData.gender === 'male' ? '/male' : '/female');
+      }
     };
 
     return (
@@ -1412,6 +1587,18 @@ const authenticateWithBackend = async (firebaseUser) => {
       </motion.div>
     );
   };
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-black">
+        <div className="text-center text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-lg">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Render current step
   return (
