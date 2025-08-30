@@ -1,6 +1,8 @@
 export interface UserData {
+  id: number;
   email: string;
   name: string;
+  profile_picture?: string;
   gender: 'male' | 'female' | '';
   location: string;
   skin_tone?: string;
@@ -8,6 +10,7 @@ export interface UserData {
   body_shape?: string | null;
   personality?: string | null;
   onboarding_completed: boolean;
+  is_new_user?: boolean;
 }
 
 export interface UserState {
